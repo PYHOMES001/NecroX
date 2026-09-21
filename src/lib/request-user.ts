@@ -1,0 +1,1 @@
+import {db} from "@/lib/db";import {readSession} from "@/lib/auth";export async function requireUser(request:Request){const id=readSession(request);if(!id)return null;return db.user.findUnique({where:{id}});}

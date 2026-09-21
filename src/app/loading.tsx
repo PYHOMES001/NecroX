@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="grid min-h-screen place-items-center"><div className="text-center"><p className="text-xs uppercase tracking-[.4em] text-[#d7ff3f]">NecroX</p><p className="mt-4 text-3xl font-black">LOADING EXPERIENCE</p></div></main>}

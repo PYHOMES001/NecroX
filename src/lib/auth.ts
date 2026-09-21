@@ -1,0 +1,9 @@
+import {createHmac,randomBytes,scryptSync,timingSafeEqual} from "node:crypto";
+const COOKIE="necrox_session";const MAX_AGE=60*60*24*7;
+function secret(){const v=process.env.AUTH_SECRET;if(!v)throw new Error("AUTH_SECRET is required");return v;}
+export function hashPassword(password:string){const salt=randomBytes(16).toString("hex");const hash=scryptSync(password,salt,64).toString("hex");return salt+":"+hash;}
+export function verifyPassword(password:string,stored:string){const [salt,hex]=stored.split(":");if(!salt||!hex)return false;const a=Buffer.from(hex,"hex");const b=scryptSync(password,salt,64);return a.length===b.length&&timingSafeEqual(a,b);}
+export function createSession(userId:string){const exp=Math.floor(Date.now()/1000)+MAX_AGE;const payload=Buffer.from(JSON.stringify({sub:userId,exp})).toString("base64url");const sig=createHmac("sha256",secret()).update(payload).digest("base64url");return payload+"."+sig;}
+export function readSession(request:Request){const raw=request.headers.get("cookie")?.split(";").map(x=>x.trim()).find(x=>x.startsWith(COOKIE+"="))?.slice(COOKIE.length+1);if(!raw)return null;const [payload,sig]=raw.split(".");if(!payload||!sig)return null;const expected=createHmac("sha256",secret()).update(payload).digest("base64url");const a=Buffer.from(sig);const b=Buffer.from(expected);if(a.length!==b.length||!timingSafeEqual(a,b))return null;try{const data=JSON.parse(Buffer.from(payload,"base64url").toString());if(!data.sub||!data.exp||data.exp<Math.floor(Date.now()/1000))return null;return String(data.sub);}catch{return null;}}
+export function sessionCookie(token:string){return `${COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE}${process.env.NODE_ENV==="production"?"; Secure":""}`;}
+export function clearSessionCookie(){return `${COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${process.env.NODE_ENV==="production"?"; Secure":""}`;}

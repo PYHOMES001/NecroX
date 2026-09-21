@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {db} from "@/lib/db";import {requireAdmin} from "@/lib/admin";
+export async function DELETE(request:Request,{params}:{params:Promise<{id:string}>}){if(!await requireAdmin(request))return NextResponse.json({error:"Forbidden"},{status:403});const {id}=await params;const review=await db.review.findUnique({where:{id}});if(!review)return NextResponse.json({error:"Review not found"},{status:404});await db.review.delete({where:{id}});return NextResponse.json({ok:true});}
