@@ -10,7 +10,8 @@
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "audit:runtime": "node scripts/audit-runtime.mjs"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
