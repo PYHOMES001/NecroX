@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {db} from "@/lib/db";import {requireAdmin} from "@/lib/admin";
+export async function PATCH(r:Request,{params}:{params:Promise<{id:string}>}){if(!await requireAdmin(r))return NextResponse.json({error:"Forbidden"},{status:403});const {id}=await params,b=await r.json();if(b.stock!==undefined&&(!Number.isInteger(b.stock)||b.stock<0))return NextResponse.json({error:"Invalid stock"},{status:400});return NextResponse.json({variant:await db.productVariant.update({where:{id},data:{stock:b.stock,color:b.color,size:b.size}})});}
