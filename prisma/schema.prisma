@@ -2,7 +2,7 @@ generator client { provider = "prisma-client-js" }
 datasource db { provider = "postgresql" url = env("DATABASE_URL") }
 enum Role { CUSTOMER ADMIN }
 enum OrderStatus { PENDING PAID PROCESSING SHIPPED DELIVERED CANCELLED }
-model User { id String @id @default(cuid()) email String @unique name String? role Role @default(CUSTOMER) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt addresses Address[] cart Cart? wishlist Wishlist? orders Order[] reviews Review[] }
+model User { id String @id @default(cuid()) email String @unique name String? passwordHash String? role Role @default(CUSTOMER) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt addresses Address[] cart Cart? wishlist Wishlist? orders Order[] reviews Review[] }
 model Address { id String @id @default(cuid()) userId String label String? fullName String line1 String line2 String? city String state String postalCode String country String @default("India") user User @relation(fields:[userId],references:[id],onDelete:Cascade) }
 model Category { id String @id @default(cuid()) name String @unique slug String @unique products Product[] }
 model Product { id String @id @default(cuid()) name String slug String @unique description String price Int active Boolean @default(true) categoryId String modelUrl String? createdAt DateTime @default(now()) updatedAt DateTime @updatedAt category Category @relation(fields:[categoryId],references:[id]) images ProductImage[] variants ProductVariant[] reviews Review[] wishlistItems WishlistItem[] }
