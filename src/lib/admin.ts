@@ -1,6 +1,1 @@
-import { db } from "@/lib/db";
-export async function requireAdmin(request:Request){
- const email=request.headers.get("x-necrox-user")?.trim().toLowerCase();
- if(!email)return null;
- return db.user.findFirst({where:{email,role:"ADMIN"}});
-}
+import {requireUser} from "@/lib/request-user";export async function requireAdmin(request:Request){const user=await requireUser(request);return user?.role==="ADMIN"?user:null;}
