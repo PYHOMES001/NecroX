@@ -1,11 +1,2 @@
-import { NextResponse } from "next/server";
-import { OrderStatus } from "@prisma/client";
-import { db } from "@/lib/db";
-import { requireAdmin } from "@/lib/admin";
-export async function PATCH(request:Request,{params}:{params:Promise<{id:string}>}){
- if(!await requireAdmin(request))return NextResponse.json({error:"Forbidden"},{status:403});
- const {id}=await params; const {status}=await request.json();
- if(!Object.values(OrderStatus).includes(status))return NextResponse.json({error:"Invalid order status"},{status:400});
- const order=await db.order.update({where:{id},data:{status}});
- return NextResponse.json({order});
-}
+import {NextResponse} from "next/server";import {OrderStatus} from "@prisma/client";import {db} from "@/lib/db";import {requireAdmin} from "@/lib/admin";
+export async function PATCH(request:Request,{params}:{params:Promise<{id:string}>}){if(!await requireAdmin(request))return NextResponse.json({error:"Forbidden"},{status:403});const {id}=await params;const {status}=await request.json();if(!Object.values(OrderStatus).includes(status))return NextResponse.json({error:"Invalid status"},{status:400});try{const order=await db.$transaction(async tx=>{const current=await tx.order.findUnique({where:{id},include:{items:true}});if(!current)throw new Error("NOT_FOUND");if(current.status!=="CANCELLED"&&status==="CANCELLED"){for(const item of current.items)await tx.productVariant.update({where:{id:item.variantId},data:{stock:{increment:item.quantity}}});}if(current.status==="CANCELLED"&&status!=="CANCELLED"){for(const item of current.items){const updated=await tx.productVariant.updateMany({where:{id:item.variantId,stock:{gte:item.quantity}},data:{stock:{decrement:item.quantity}}});if(updated.count!==1)throw new Error("OUT_OF_STOCK");}}return tx.order.update({where:{id},data:{status}});});return NextResponse.json({order});}catch(e){const m=e instanceof Error?e.message:"";return NextResponse.json({error:m==="NOT_FOUND"?"Order not found":m==="OUT_OF_STOCK"?"Cannot reopen order because stock is insufficient":"Could not update order"},{status:m==="NOT_FOUND"?404:409});}}
