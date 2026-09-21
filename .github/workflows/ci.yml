@@ -19,5 +19,5 @@ jobs:
       - run: npm run db:generate
       - run: npm run typecheck
       - run: npm run build
-      - run: npm prune --omit=dev
+      - run: npm prune --omit=dev --omit=peer
       - run: npm run audit:runtime
