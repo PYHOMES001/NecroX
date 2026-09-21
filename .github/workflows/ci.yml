@@ -1,0 +1,22 @@
+name: NecroX CI
+on:
+  pull_request:
+  push:
+    branches: [main, build/foundation]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/necrox
+      AUTH_SECRET: ci-only-necrox-secret-that-is-long-enough
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm run build
