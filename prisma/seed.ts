@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/lib/auth";
 const prisma = new PrismaClient();
 
 const catalog = [
@@ -8,6 +9,8 @@ const catalog = [
 ];
 
 async function main(){
+  if(process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.length>=8){const email=process.env.ADMIN_EMAIL.toLowerCase();await prisma.user.upsert({where:{email},update:{role:"ADMIN",passwordHash:hashPassword(process.env.ADMIN_PASSWORD)},create:{email,name:"NecroX Admin",role:"ADMIN",passwordHash:hashPassword(process.env.ADMIN_PASSWORD)}});}
+
   const category=await prisma.category.upsert({where:{slug:"sneakers"},update:{},create:{name:"Sneakers",slug:"sneakers"}});
   for(const item of catalog){
     const product=await prisma.product.upsert({where:{slug:item.slug},update:{name:item.name,description:item.description,price:item.price,categoryId:category.id},create:{name:item.name,slug:item.slug,description:item.description,price:item.price,categoryId:category.id}});
