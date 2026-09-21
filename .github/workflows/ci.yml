@@ -19,4 +19,5 @@ jobs:
       - run: npm run db:generate
       - run: npm run typecheck
       - run: npm run build
+      - run: npm prune --omit=dev
       - run: npm audit --omit=dev --audit-level=high
