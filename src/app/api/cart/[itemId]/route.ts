@@ -1,9 +1,3 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { requireUser } from "@/lib/request-user";
-export async function DELETE(request:Request,{params}:{params:Promise<{itemId:string}>}){
- const user=await requireUser(request); if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});
- const {itemId}=await params; const item=await db.cartItem.findFirst({where:{id:itemId,cart:{userId:user.id}}});
- if(!item)return NextResponse.json({error:"Cart item not found"},{status:404});
- await db.cartItem.delete({where:{id:item.id}}); return NextResponse.json({ok:true});
-}
+import {NextResponse} from "next/server";import {db} from "@/lib/db";import {requireUser} from "@/lib/request-user";
+export async function PATCH(request:Request,{params}:{params:Promise<{itemId:string}>}){const user=await requireUser(request);if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});const {itemId}=await params;const {quantity}=await request.json();const qty=Number(quantity);if(!Number.isInteger(qty)||qty<1)return NextResponse.json({error:"Quantity must be at least 1"},{status:400});const item=await db.cartItem.findFirst({where:{id:itemId,cart:{userId:user.id}},include:{variant:true}});if(!item)return NextResponse.json({error:"Cart item not found"},{status:404});if(item.variant.stock<qty)return NextResponse.json({error:"Insufficient stock"},{status:409});return NextResponse.json({item:await db.cartItem.update({where:{id:item.id},data:{quantity:qty}})});}
+export async function DELETE(request:Request,{params}:{params:Promise<{itemId:string}>}){const user=await requireUser(request);if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});const {itemId}=await params;const item=await db.cartItem.findFirst({where:{id:itemId,cart:{userId:user.id}}});if(!item)return NextResponse.json({error:"Cart item not found"},{status:404});await db.cartItem.delete({where:{id:item.id}});return NextResponse.json({ok:true});}
