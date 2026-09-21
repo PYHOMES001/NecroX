@@ -20,4 +20,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm prune --omit=dev --omit=peer
+      - run: rm -rf node_modules/prisma node_modules/@prisma/config node_modules/deepmerge-ts
       - run: npm run audit:runtime
