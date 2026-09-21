@@ -41,6 +41,8 @@ NecroX is an immersive AI-powered 3D commerce platform for premium sneakers and 
 - Order confirmation and account order history
 - Verified-customer product reviews
 - Admin dashboard metrics and low-stock alerts
+- Customer reporting with order counts and paid value
+- Review moderation
 - Category creation
 - Product creation/archive/restore
 - Product price editing
