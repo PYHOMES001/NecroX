@@ -6,7 +6,7 @@ NecroX is an immersive AI-powered 3D commerce platform for premium sneakers and 
 
 ## Stack
 
-- Next.js 15 + React 19 + TypeScript
+- Next.js 16 + React 19 + TypeScript
 - Tailwind CSS
 - PostgreSQL + Prisma
 - Three.js + React Three Fiber + Drei
@@ -70,7 +70,7 @@ NecroX is an immersive AI-powered 3D commerce platform for premium sneakers and 
 Set:
 
 - `OPENAI_API_KEY`
-- `OPENAI_MODEL` (defaults to `gpt-6-astra`)
+- `OPENAI_MODEL` (defaults to `gpt-5.6-luna`)
 
 Without an OpenAI key, NecroX automatically falls back to deterministic live-catalog ranking rather than returning fake AI results.
 
