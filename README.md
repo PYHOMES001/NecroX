@@ -61,6 +61,14 @@ The test payment endpoint is deliberately disabled in production. For deployment
 
 The discovery route is grounded in the actual NecroX database and currently uses deterministic intent extraction/ranking so it never fabricates catalog products. `OPENAI_API_KEY` is reserved for the next LLM-enhanced assistant phase.
 
+## External integrations
+
+- OpenAI Responses API for catalog-grounded assistant reasoning, with deterministic fallback when no API key is configured
+- Stripe Checkout test mode for hosted payment sessions and server-side payment verification
+- Cloudinary signed uploads for product images and GLB files from the admin product manager
+
+Required/optional environment variables are documented in `.env.example`.
+
 ## Main routes
 
 - `/` cinematic storefront
